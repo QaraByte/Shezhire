@@ -21,9 +21,18 @@ namespace Shezhire.Controllers
             db = context;
         }
 
+        public class MainPageModel
+        {
+            public List<User> Model1 { get; set; }
+            public List<Node> Model2 { get; set; }
+        }
+
         public async Task<IActionResult> Index()
         {
-            return View(await db.Users.ToListAsync());
+            MainPageModel main = new MainPageModel();
+            main.Model1 = await db.Users.ToListAsync();
+            main.Model2 = await db.Nodes.ToListAsync();
+            return View(main);
         }
         
         public IActionResult Create()
@@ -39,9 +48,80 @@ namespace Shezhire.Controllers
             return RedirectToAction("Index");
         }
 
+        public IActionResult CreateMan()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CreateMan(Node node)
+        {
+            db.Nodes.Add(node);
+            await db.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+
         public IActionResult Privacy()
         {
             return View();
+        }
+
+        public async Task<IActionResult> Details(int? id)
+        {
+            if (id != null)
+            {
+                User user = await db.Users.FirstOrDefaultAsync(p => p.Id == id);
+                if (user != null)
+                    return View(user);
+            }
+            return NotFound();
+        }
+
+        public async Task<IActionResult> Edit(int? id)
+        {
+            if (id != null)
+            {
+                User user = await db.Users.FirstOrDefaultAsync(p => p.Id == id);
+                if (user != null)
+                    return View(user);
+            }
+            return NotFound();
+        }
+        [HttpPost]
+        public async Task<IActionResult> Edit(User user)
+        {
+            db.Users.Update(user);
+            await db.SaveChangesAsync();
+            return RedirectToAction("Index");
+        }
+
+        [HttpGet]
+        [ActionName("Delete")]
+        public async Task<IActionResult> ConfirmDelete(int? id)
+        {
+            if (id != null)
+            {
+                User user = await db.Users.FirstOrDefaultAsync(p => p.Id == id);
+                if (user != null)
+                    return View(user);
+            }
+            return NotFound();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Delete(int? id)
+        {
+            if (id != null)
+            {
+                User user = await db.Users.FirstOrDefaultAsync(p => p.Id == id);
+                if (user != null)
+                {
+                    db.Users.Remove(user);
+                    await db.SaveChangesAsync();
+                    return RedirectToAction("Index");
+                }
+            }
+            return NotFound();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]

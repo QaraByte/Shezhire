@@ -1,4 +1,4 @@
-﻿@model IEnumerable<Shezhire.Models.User>
+﻿@*@model IEnumerable<Shezhire.Models.User>*@
 @{
     ViewBag.Title = "Все пользователи";
 }
@@ -7,10 +7,26 @@
 
     <a asp-action="Create">Добавить пользователя</a>
     <table class="table">
-        <tr><td>Имя</td><td>Возраст</td></tr>
-        @foreach (var item in Model)
+
+        @foreach (var item in Model.Model1)
         {
-            <tr><td>@item.Name</td><td>@item.Age</td></tr>
+            <tr>
+                <td>@item.Name</td>
+                <td>
+                    <a asp-action="Details" asp-controller="Home" asp-route-id="@item.Id">Подробнее</a> |
+                    <a asp-action="Edit" asp-controller="Home" asp-route-id="@item.Id">Изменить</a> |
+                    <a asp-action="Delete" asp-controller="Home" asp-route-id="@item.Id">Удалить</a>
+                </td>
+            </tr>
         }
     </table>
+
+    <a asp-action="CreateMan">Добавить человека</a>
+    <div>
+        @foreach (var item in Model.Model2)
+        {
+            <p>@item.Name</p>
+            <p>@item.Birthdate</p>
+        }
+    </div>
 </div>

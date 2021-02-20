@@ -9,6 +9,7 @@ namespace Shezhire.Models
     public class ApplicationContext:DbContext
     {
         public DbSet<User> Users { get; set; }
+        public DbSet<Node> Nodes { get; set; }
         public ApplicationContext(DbContextOptions<ApplicationContext> options)
             : base(options)
         {
