@@ -1,22 +1,22 @@
-﻿@*@model Shezhire.Models.Node*@
-@using Shezhire.Controllers;
-@model HomeController.Nodes
+﻿@using Shezhire.Controllers;
+@*@model HomeController.Nodes*@
+@model Shezhire.Models.Node
 @{
     ViewBag.Title = "Добавление человека";
 }
 <form asp-action="createMan" asp-controller="home">
     <div class="form-group">
-        <label asp-for="@Model.Model1.Name" class="control-label">Имя</label>
-        <input type="text" asp-for="@Model.Model1.Name" class="form-control" />
+        <label asp-for="Name" class="control-label">Имя</label>
+        <input type="text" asp-for="Name" class="form-control" />
     </div>
     <div class="form-group">
-        <label asp-for="@Model.Model1.Birthdate" class="control-label">Дата рождения</label>
-        <input type="datetime" asp-for="@Model.Model1.Birthdate" class="form-control" />
+        <label asp-for="Birthdate" class="control-label">Дата рождения</label>
+        <input type="datetime" asp-for="Birthdate" class="form-control" />
     </div>
     <div class="form-group">
-        <label asp-for="@Model.Model1.Parent_id" class="control-label">Родитель</label>
-        <select>
-            @foreach (var item in Model.Model2)
+        <label asp-for="Parent_id" class="control-label">Родитель</label>
+        <select name="Parent_id" asp-for="Parent_id">
+            @foreach (var item in ViewBag.Nodes)
             {
                 <option value="@item.Id">@item.Name</option>
             }

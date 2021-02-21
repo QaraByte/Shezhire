@@ -1,12 +1,14 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using Shezhire.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Dynamic;
 using System.Linq;
+//using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace Shezhire.Controllers
@@ -41,6 +43,14 @@ namespace Shezhire.Controllers
             return View();
         }
 
+        public string GetNodes()
+        {
+            var nodes = db.Nodes.ToList();
+            string result= JsonConvert.SerializeObject(nodes);
+
+            return result;
+        }
+
         [HttpPost]
         public async Task<IActionResult> Create(User user)
         {
@@ -57,13 +67,13 @@ namespace Shezhire.Controllers
 
         public async Task<IActionResult> CreateMan()
         {
-            Nodes nodes = new Nodes();
-            nodes.Model1= new Node();
-            nodes.Model2 = await db.Nodes.ToListAsync();
+            //Nodes nodes = new Nodes();
+            //nodes.Model1= new Node();
+            //nodes.Model2 = await db.Nodes.ToListAsync();
 
-            //ViewBag.Node = new Node();
+            ViewBag.Nodes = await db.Nodes.ToListAsync();
             //var nodes = await db.Nodes.ToListAsync();
-            return View(nodes);
+            return View();
         }
 
         [HttpPost]
