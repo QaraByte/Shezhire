@@ -5,6 +5,7 @@ using Shezhire.Models;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Dynamic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -48,9 +49,21 @@ namespace Shezhire.Controllers
             return RedirectToAction("Index");
         }
 
-        public IActionResult CreateMan()
+        public class Nodes
         {
-            return View();
+            public Node Model1 { get; set; }
+            public List<Node> Model2 { get; set; }
+        }
+
+        public async Task<IActionResult> CreateMan()
+        {
+            Nodes nodes = new Nodes();
+            nodes.Model1= new Node();
+            nodes.Model2 = await db.Nodes.ToListAsync();
+
+            //ViewBag.Node = new Node();
+            //var nodes = await db.Nodes.ToListAsync();
+            return View(nodes);
         }
 
         [HttpPost]
