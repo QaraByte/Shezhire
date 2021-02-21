@@ -12,12 +12,13 @@ $(document).ready(function () {
             for (let i = 0; i < nodes.length; i++) {
                 //let div = $('<div>');
                 let node = {};
-                node.Element = $('<p id="' + nodes[i].Id + '">[' + nodes[i].Id + ']' + nodes[i].Name + '</p>');
+                node.Element = $('<div class="node" id="' + nodes[i].Id + '">[' + nodes[i].Id + ']' + nodes[i].Name + '</div>');
                 if (nodes[i].Parent_id == 0) {
                     $('.nodes').append(node.Element);
                 }
                 else {
-                    $('#' + nodes[i].Parent_id).next().after(node.Element);
+                    node.Element.attr('data-parent-id', '' + nodes[i].Parent_id).data('parent-id', '' + nodes[i].Parent_id);
+                    $('#' + nodes[i].Parent_id).after(node.Element);
                 }
 
                 let birthDate = new Date(nodes[i].Birthdate);
@@ -30,13 +31,24 @@ $(document).ready(function () {
                     node.Birthdate = $('<p>д.р.</p>');
                 }
                 if (nodes[i].Parent_id == 0) {
-                    $('.nodes').append(node.Birthdate);
+                    node.Element.append(node.Birthdate);
                 }
                 else {
                     //$('#' + nodes[i].Parent_id).next().after(node.Birthdate);
-                    node.Element.after(node.Birthdate)
+                    node.Element.append(node.Birthdate)
+                }
+
+                if (nodes[i].Parent_id != 0) {
+                    if ($('.node[data-parent-id="' + nodes[i].Parent_id + '"]').length > 1) {
+
+                        $('.nodes > .node[data-parent-id="' + nodes[i].Parent_id + '"]').wrapAll('<div class="row"></div>');
+                    }
                 }
             }
+
+            //for (let i = 0; i < nodes.length; i++) {
+                
+            //}
         }
     });
 });

@@ -77,3 +77,11 @@ body {
 .nodeBirth {
     margin-bottom: 0;
 }
+
+.node {
+    width: 150px;
+    margin: auto;
+    height: 50px;
+    background-color: coral;
+    margin-bottom: 15px;
+}
