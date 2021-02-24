@@ -45,7 +45,7 @@ namespace Shezhire.Controllers
 
         public string GetNodes()
         {
-            var nodes = db.Nodes.ToList();
+            var nodes = db.Nodes.ToList().OrderBy(x=>x.Parent_id);
             string result= JsonConvert.SerializeObject(nodes);
 
             return result;
