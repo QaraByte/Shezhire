@@ -35,6 +35,7 @@ namespace Shezhire.Controllers
             MainPageModel main = new MainPageModel();
             main.Model1 = await db.Users.ToListAsync();
             main.Model2 = await db.Nodes.ToListAsync();
+            ViewBag.Count = db.Nodes.Count();
             return View(main);
         }
         

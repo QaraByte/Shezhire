@@ -12,7 +12,7 @@ $(document).ready(function () {
             let cnv = document.getElementById('cnv');
             let context = cnv.getContext('2d');
             let body = document.querySelector('body');
-            cnv.width = body.clientWidth - 150;
+            cnv.width = body.clientWidth - 250;
             cnv.height = 800;
             context.fillStyle = "#fbf3dc";
             context.fillRect(0, 0, cnv.width, cnv.height);
@@ -28,6 +28,7 @@ $(document).ready(function () {
 
                     let node = {};
                     node.Id = nodes[i].Id;
+                    node.Name = nodes[i].Name;
                     node.Parent_id = nodes[i].Parent_id;
                     node.w = nodeWidth;
                     node.h = nodeHeight;
@@ -39,7 +40,7 @@ $(document).ready(function () {
                         context.strokeText(nodes[i].Name, node.x + 10, node.y + 10);
                         let birthDate = new Date(nodes[i].Birthdate);
                         if (birthDate.getTime() !== -62135618500000) {
-                            node.Birthdate = 'д.р. ' + birthDate.getDate() + '.' + birthDate.getMonth() + '.' + birthDate.getFullYear();
+                            node.Birthdate = 'д.р. ' + birthDate.getDate() + '.' + (birthDate.getMonth() + 1) + '.' + birthDate.getFullYear();
                         }
                         else {
                             node.Birthdate = 'д.р.';
@@ -55,13 +56,14 @@ $(document).ready(function () {
                         if (n.length == 1) {
                             //Ищем нарисованного родителя
                             let n1 = nodesDrawed.find(item => item.Id == nodes[i].Parent_id);
+
                             node.x = n1.x;
                             node.y = n1.y + 50;
                             context.strokeRect(node.x, node.y, node.w, node.h)
                             context.strokeText(nodes[i].Name, node.x + 10, node.y + 10);
                             let birthDate = new Date(nodes[i].Birthdate);
                             if (birthDate.getTime() !== -62135618500000) {
-                                node.Birthdate = 'д.р. ' + birthDate.getDate() + '.' + birthDate.getMonth() + '.' + birthDate.getFullYear();
+                                node.Birthdate = 'д.р. ' + birthDate.getDate() + '.' + (birthDate.getMonth() + 1)+ '.' + birthDate.getFullYear();
                             }
                             else {
                                 node.Birthdate = 'д.р.';
@@ -71,7 +73,19 @@ $(document).ready(function () {
                         }
                         //Если потомков два и более
                         if (n.length > 1) {
-                            //let total_width = n.length * 100;
+
+                            //c - количество всех детей текущего уровня
+                            let c = 0;
+                            for (let m = 0; m < n.length; m++) {
+                                let sons = nodes.filter(x => x.Parent_id == n[m].Id);
+                                c = c + sons.length;
+                            }
+                            //Вычисляем ширину для рисования нодов
+                            let w = n.length;
+                            if (c > n.length)
+                                w = c;
+                            w = w * 100;
+
                             for (let j = 0; j < n.length; j++) {
                                 let node2 = n[j];
                                 node2.w = nodeWidth;
@@ -82,13 +96,16 @@ $(document).ready(function () {
                                 let n2 = nodesDrawed.filter(x => x.Parent_id == n[j].Parent_id);
                                 //Если потомок для рисования - первый
                                 if (n2.length == 0) {
-                                    node2.x = n1.x - 50;
+                                    let x1 = n1.x - w / 2.5;
+                                    if (x1 < 0)
+                                        x1 = 0;
+                                    node2.x = x1;
                                     node2.y = n1.y + 50;
                                     context.strokeRect(node2.x, node2.y, node2.w, node2.h)
                                     context.strokeText(n[j].Name, node2.x + 10, node2.y + 10);
                                     let birthDate = new Date(n[j].Birthdate);
                                     if (birthDate.getTime() !== -62135618500000) {
-                                        node2.Birthdate = 'д.р. ' + birthDate.getDate() + '.' + birthDate.getMonth() + '.' + birthDate.getFullYear();
+                                        node2.Birthdate = 'д.р. ' + birthDate.getDate() + '.' + (birthDate.getMonth() + 1) + '.' + birthDate.getFullYear();
                                     }
                                     else {
                                         node2.Birthdate = 'д.р.';
@@ -108,11 +125,18 @@ $(document).ready(function () {
                                             n3 = n2[k];
                                         }
                                     }
-                                    //let n3 = n2.find(x => x.x == Math.max(x.x));
+                                    //Ищем детей у предыдущего брата/сестры
+                                    let childrens = nodes.filter(x => x.Parent_id == n3.Id);
+                                    let dist = 0;
+                                    //Если детей более одного, то вычисляем координату Х по другой формуле
+                                    if (childrens.length > 1)
+                                        dist = n3.x + childrens.length * 100 / 2 + 30;
+                                    else
+                                        dist = n3.x + w / n.length;
 
                                     let n4 = {};
                                     n4 = n[j];
-                                    n4.x = n3.x + 110;
+                                    n4.x = dist;
                                     n4.y = n3.y;
                                     context.strokeRect(n4.x, n4.y, n4.w, n4.h);
                                     context.strokeText(n4.Name, n4.x + 10, n4.y + 10);
@@ -122,7 +146,7 @@ $(document).ready(function () {
                                     //context.strokeText(n[j].Name, node2.x + 10, node2.y + 10);
                                     let birthDate = new Date(n[j].Birthdate);
                                     if (birthDate.getTime() !== -62135618500000) {
-                                        n4.Birthdate = 'д.р. ' + birthDate.getDate() + '.' + birthDate.getMonth() + '.' + birthDate.getFullYear();
+                                        n4.Birthdate = 'д.р. ' + birthDate.getDate() + '.' + (birthDate.getMonth() + 1) + '.' + birthDate.getFullYear();
                                     }
                                     else {
                                         n4.Birthdate = 'д.р.';
