@@ -34,7 +34,7 @@ $(document).ready(function () {
                     node.h = nodeHeight;
                     context.lineWidth = 1;
                     if (nodes[i].Parent_id == 0) {
-                        node.x = 300;
+                        node.x = 400;
                         node.y = 50;
                         context.strokeRect(node.x, node.y, node.w, node.h)
                         context.strokeText(nodes[i].Name, node.x + 10, node.y + 10);
@@ -50,7 +50,7 @@ $(document).ready(function () {
                     }
                     else {
                         let parent_id = nodes[i].Parent_id;
-                        //n-количество потомков
+                        //n-количество братьев/сестер
                         let n = nodes.filter(x => x.Parent_id == parent_id);
                         //Если потомок один
                         if (n.length == 1) {
@@ -74,7 +74,7 @@ $(document).ready(function () {
                         //Если потомков два и более
                         if (n.length > 1) {
 
-                            //c - количество всех детей текущего уровня
+                            //c - количество всех детей нижнего уровня
                             let c = 0;
                             for (let m = 0; m < n.length; m++) {
                                 let sons = nodes.filter(x => x.Parent_id == n[m].Id);
@@ -99,6 +99,25 @@ $(document).ready(function () {
                                     let x1 = n1.x - w / 2.5;
                                     if (x1 < 0)
                                         x1 = 0;
+                                    //Ищем нарисованных братьев/сестер родителя
+                                    let agalar = nodesDrawed.filter(x => x.Parent_id == n1.Parent_id && x.Id != n1.Id);
+                                    let maxRight = -1;
+                                    for (let i1 = 0; i1 < agalar.length; i1++) {
+                                        //Ищем нарисованных детей братьев/сестер
+                                        let brotherChildrens = nodesDrawed.filter(x => x.Parent_id == agalar[i1].Id);
+                                        for (let i2 = 0; i2 < brotherChildrens.length; i2++) {
+                                            if (brotherChildrens[i2].x > maxRight) {
+                                                maxRight = brotherChildrens[i2].x;
+                                            }
+                                        }
+                                    }
+                                    if (maxRight != -1) {
+                                        let x2 = maxRight + nodeWidth + 10;
+                                        if (x1 < x2)
+                                            x1 = x2;
+                                    }
+                                        
+                                    
                                     node2.x = x1;
                                     node2.y = n1.y + 50;
                                     context.strokeRect(node2.x, node2.y, node2.w, node2.h)
@@ -117,7 +136,7 @@ $(document).ready(function () {
                                 //Если потомок уже был нарисован
                                 else {
                                     //Ищем самого правого нарисованного
-                                    let max = 0;
+                                    let max = -1;
                                     let n3 = {};
                                     for (let k = 0; k < n2.length; k++) {
                                         if (n2[k].x > max) {
@@ -126,11 +145,17 @@ $(document).ready(function () {
                                         }
                                     }
                                     //Ищем детей у предыдущего брата/сестры
-                                    let childrens = nodes.filter(x => x.Parent_id == n3.Id);
+                                    let brotherChildrens = nodes.filter(x => x.Parent_id == n3.Id);
                                     let dist = 0;
                                     //Если детей более одного, то вычисляем координату Х по другой формуле
-                                    if (childrens.length > 1)
-                                        dist = n3.x + childrens.length * 100 / 2 + 30;
+                                    if (brotherChildrens.length > 1) {
+                                        //Смотрим кол-во собственных детей
+                                        let children = nodes.filter(x => x.Parent_id == n[j].Id);
+                                        if (children.length == 1 || children.length == 0)
+                                            dist = n3.x + brotherChildrens.length * 100 / 2 + 30;
+                                        else
+                                            dist = n3.x + (brotherChildrens.length + children.length) * 100 / 2 + 30;
+                                    }
                                     else
                                         dist = n3.x + w / n.length;
 
